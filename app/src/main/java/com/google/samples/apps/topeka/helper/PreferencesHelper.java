@@ -68,7 +68,7 @@ public class PreferencesHelper {
             avatar = null;
         }
 
-        if (null == firstName && null == lastInitial && null == avatar) {
+        if (null == firstName || null == lastInitial || null == avatar) {
             return null;
         }
         return new Player(firstName, lastInitial, avatar);
