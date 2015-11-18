@@ -55,8 +55,9 @@ import static org.hamcrest.Matchers.not;
 @LargeTest
 public class SignInActivityTest {
 
-    private static final String TEST_FIRST_NAME = "Zaphod";
+    private static final String TEST_FIRST_NAME = "Ryuk";
     private static final String TEST_LAST_INITIAL = "B";
+    private static final Avatar TEST_CAT_AVATAR = Avatar.TWELVE;
 
     @Rule
     public ActivityTestRule<SignInActivity> mActivityRule =
@@ -82,13 +83,39 @@ public class SignInActivityTest {
     }
 
     @Test
-    public void signIn_inputDataSuccessfully() {
-        inputData();
+    public void signIn_withoutAvatarFailed() {
+        inputFirstName();
+        inputLastInitial();
+        onView(withId(R.id.done)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void signIn_withoutFirstNameFailed() {
+        inputLastInitial();
+        selectCatAvatar();
+        onView(withId(R.id.done)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void signIn_withoutLastInitialFailed() {
+        inputFirstName();
+        selectCatAvatar();
+        onView(withId(R.id.done)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void signIn_withCompletePlayerDataSuccessfully() {
+        inputFirstName();
+        inputLastInitial();
+        selectCatAvatar();
         onView(withId(R.id.done)).check(matches(isDisplayed()));
     }
 
+    @Test
     public void signIn_performSignIn() {
-        inputData();
+        inputFirstName();
+        inputLastInitial();
+        selectCatAvatar();
         onView(withId(R.id.done)).perform(click());
         assertTrue(PreferencesHelper.isSignedIn(InstrumentationRegistry.getTargetContext()));
     }
@@ -98,6 +125,28 @@ public class SignInActivityTest {
         typeAndHideKeyboard(R.id.last_initial, TEST_FIRST_NAME);
         String expectedValue = String.valueOf(TEST_FIRST_NAME.charAt(0));
         onView(withId(R.id.last_initial)).check(matches(withText(expectedValue)));
+    }
+
+    private void inputFirstName() {
+        typeAndHideKeyboard(R.id.first_name, TEST_FIRST_NAME);
+    }
+
+    private void inputLastInitial() {
+        typeAndHideKeyboard(R.id.last_initial, TEST_LAST_INITIAL);
+    }
+
+    private void typeAndHideKeyboard(int targetViewId, String text) {
+        onView(withId(targetViewId)).perform(typeText(text), closeSoftKeyboard());
+    }
+
+    private void selectCatAvatar() {
+        selectAvatar(TEST_CAT_AVATAR);
+    }
+
+    private void selectAvatar(Avatar avatar) {
+        onData(equalTo(avatar))
+                .inAdapterView(withId(R.id.avatars))
+                .perform(click());
     }
 
     @Test
@@ -146,14 +195,5 @@ public class SignInActivityTest {
                     .inAdapterView(withId(R.id.avatars))
                     .check(matches(matcher));
         }
-    }
-
-    private void inputData() {
-        typeAndHideKeyboard(R.id.first_name, TEST_FIRST_NAME);
-        typeAndHideKeyboard(R.id.last_initial, TEST_LAST_INITIAL);
-    }
-
-    private void typeAndHideKeyboard(int targetViewId, String text) {
-        onView(withId(targetViewId)).perform(typeText(text), closeSoftKeyboard());
     }
 }
