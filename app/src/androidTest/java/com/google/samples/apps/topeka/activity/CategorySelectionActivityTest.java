@@ -24,13 +24,13 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.google.samples.apps.topeka.AnimationAwareTestRule;
 import com.google.samples.apps.topeka.R;
 import com.google.samples.apps.topeka.helper.PreferencesHelper;
 import com.google.samples.apps.topeka.model.Avatar;
 import com.google.samples.apps.topeka.model.Category;
 import com.google.samples.apps.topeka.model.Player;
 import com.google.samples.apps.topeka.persistence.TopekaDatabaseHelper;
+import com.google.samples.apps.topeka.rule.AnimationAwareReaderTestRule;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,8 +74,8 @@ public class CategorySelectionActivityTest {
             };
 
     @Rule
-    public AnimationAwareTestRule mAnimationAwareTestRule =
-            new AnimationAwareTestRule();
+    public AnimationAwareReaderTestRule mAnimationAwareTestRule =
+            new AnimationAwareReaderTestRule();
 
     @Before
     public void loadCategories() {

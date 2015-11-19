@@ -42,7 +42,7 @@ matrix:
 before_install:
   - chmod +x execute
   - chmod +x scripts/acib
-  - ./execute read-pre-dexing-option # Read pre-dexing option from targets. Used by ${PREDEX_OPT:-}
+  - if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
 
 install:
   - ./execute install-and-update-sdk # Install and update the SDK based on env vars or Acib defaults

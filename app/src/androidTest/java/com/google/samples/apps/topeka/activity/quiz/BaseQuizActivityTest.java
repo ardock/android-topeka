@@ -24,7 +24,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.google.samples.apps.topeka.AnimationAwareTestRule;
 import com.google.samples.apps.topeka.R;
 import com.google.samples.apps.topeka.activity.QuizActivity;
 import com.google.samples.apps.topeka.helper.PreferencesHelper;
@@ -34,6 +33,7 @@ import com.google.samples.apps.topeka.model.Category;
 import com.google.samples.apps.topeka.model.Player;
 import com.google.samples.apps.topeka.model.quiz.Quiz;
 import com.google.samples.apps.topeka.persistence.TopekaDatabaseHelper;
+import com.google.samples.apps.topeka.rule.AnimationAwareReaderTestRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -78,8 +78,8 @@ public abstract class BaseQuizActivityTest {
             };
 
     @Rule
-    public final AnimationAwareTestRule mAnimationAwareTestRule =
-            new AnimationAwareTestRule();
+    public final AnimationAwareReaderTestRule mAnimationAwareTestRule =
+            new AnimationAwareReaderTestRule();
 
     abstract int getCategory();
 
