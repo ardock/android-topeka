@@ -1,0 +1,62 @@
+language: android
+
+sudo: false
+
+before_cache:
+  - rm -f ${TRAVIS_BUILD_DIR}/gradle/caches/modules-2/modules-2.lock
+
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/gradle/caches/
+    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
+
+notifications:
+  email: false
+
+env:
+  global: # ADB_INSTALL_TIMEOUT=2 minutes by default. See Acib script for other default values.
+    - ADB_INSTALL_TIMEOUT=8
+#    - INSTALL_PKGS='build-tools-23.0.1,android-23'
+#    - UPDATE_PKGS='platform-tools,tools,extra-android-m2repository,extra-google-m2repository'
+    - GRADLE_USER_HOME="${TRAVIS_BUILD_DIR}/gradle"
+#    - AVD_DEBUG='init,avd_config,nand_limits,keys,adb,adbserver,adbclient'
+#    - ANDROID_LOG_TAGS='NetworkStats:S dalvikvm:S Zygote:S Resources:S *:D'
+#    - ANDROID_SERIAL='emulator-5554'
+
+matrix:
+  include:
+    - env: AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
+  allow_failures: #TODO: disable anims and https://code.google.com/p/android/issues/detail?id=189764
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
+  fast_finish: false
+
+before_install:
+  - chmod +x execute
+  - chmod +x scripts/acib
+  - ./execute read-pre-dexing-option # Read pre-dexing option from targets. Used by ${PREDEX_OPT:-}
+
+install:
+  - ./execute install-and-update-sdk # Install and update the SDK based on env vars or Acib defaults
+  - ./execute create-and-start-device # Create and start a device based on env vars or Acib defaults
+  - ./execute wait-for-device-online # Start adbd, wait for device connected and show android serial
+  - ./gradlew --version # Show version and download Gradle Wrapper when is not present in cache
+  - ./gradlew clean # Clean project and download Android dependencies when are not present in cache
+
+before_script:
+  - ./execute wait-for-device-ready # Wait until device is ready: stopped state or custom sleep time
+
+script:
+  - ./gradlew test ${PREDEX_OPT:-} # Run unit tests for all variants
+  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs instrumentation tests for all flavors
+
+after_script:
+ - ./execute show-travis-test-results # Print unit and intrumentation test results on Travis-ci web
