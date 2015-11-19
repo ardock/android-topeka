@@ -18,6 +18,7 @@ function create-and-start-device {
     emulator -avd "${AVD_NAME:-test}" \
         -no-audio \
         -no-window \
+        -gpu on \
         -debug "${AVD_DEBUG:-avd_config}" &
 }
 #        -no-skin \         # the emulator screen size is fixed removing this option, locally. CI??

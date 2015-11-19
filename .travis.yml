@@ -29,7 +29,7 @@ matrix:
     - env: AVD_TARGET=android-16 ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-19
+    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
 #    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
 #           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
 #    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
@@ -58,7 +58,7 @@ before_script:
 
 script:
   - ./gradlew test ${PREDEX_OPT:-} # Run unit tests for all variants
-  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs instrumentation tests for all flavors
+  - travis_wait ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
 
 after_script:
  - ./execute show-travis-test-results # Print unit and intrumentation test results on Travis-ci web
