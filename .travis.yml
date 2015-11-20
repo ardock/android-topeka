@@ -25,18 +25,22 @@ env:
 
 matrix:
   include:
-    - env: AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-15 ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-16 ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
     - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
-#    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-#           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVD_TARGET='Google Inc.:Google APIs:22' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-22,sys-img-armeabi-v7a-addon-google_apis-google-22
 #    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
 #           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
-#  allow_failures: #TODO: disable anims and https://code.google.com/p/android/issues/detail?id=189764
-#    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-#           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+  allow_failures: #TODO: https://code.google.com/p/android/issues/detail?id=189764
+    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
+    - env: AVD_TARGET='Google Inc.:Google APIs:22' AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-22,sys-img-armeabi-v7a-addon-google_apis-google-22
 #    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
 #           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
   fast_finish: false
