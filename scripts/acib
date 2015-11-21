@@ -16,6 +16,7 @@ function create-and-start-device {
         -g "${AVD_TAG:-default}"
     # Start device
     emulator -avd "${AVD_NAME:-test}" \
+        -no-boot-anim \
         -no-audio \
         -no-window \
         -debug "${AVD_DEBUG:-avd_config}" &
@@ -84,7 +85,7 @@ function wait-for-device-ready {
     done
     sleep 15
     adb shell input keyevent 82 &
-    sleep 45
+    sleep 150
     echo "Ready!!!"
 }
 
