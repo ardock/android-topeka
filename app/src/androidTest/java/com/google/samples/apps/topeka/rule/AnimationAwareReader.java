@@ -51,10 +51,10 @@ class AnimationAwareReader {
      */
     public static boolean isAnyAnimationEnabled() {
         ContentResolver resolver = InstrumentationRegistry.getTargetContext().getContentResolver();
-        final float transitionAnimationScale = getTransitionAnimationScale(resolver);
         final float windowAnimationScale = getWindowAnimationScale(resolver);
+        final float transitionAnimationScale = getTransitionAnimationScale(resolver);
         final float animatorDurationScale = getAnimatorDurationScale(resolver);
-        return transitionAnimationScale + animatorDurationScale + windowAnimationScale != 0;
+        return windowAnimationScale + transitionAnimationScale + animatorDurationScale != 0;
     }
 
     /**
@@ -64,18 +64,10 @@ class AnimationAwareReader {
      */
     public static float[] getAnimationScales() {
         ContentResolver resolver = InstrumentationRegistry.getTargetContext().getContentResolver();
-        final float transitionAnimationScale = getTransitionAnimationScale(resolver);
         final float windowAnimationScale = getWindowAnimationScale(resolver);
+        final float transitionAnimationScale = getTransitionAnimationScale(resolver);
         final float animatorDurationScale = getAnimatorDurationScale(resolver);
-        return new float[]{transitionAnimationScale, windowAnimationScale, animatorDurationScale};
-    }
-
-    @SuppressWarnings("deprecation")
-    @SuppressLint("InlinedApi")
-    private static float getTransitionAnimationScale(ContentResolver resolver) {
-        //noinspection deprecation
-        return getSetting(resolver, Settings.Global.TRANSITION_ANIMATION_SCALE,
-                Settings.System.TRANSITION_ANIMATION_SCALE);
+        return new float[]{windowAnimationScale, transitionAnimationScale, animatorDurationScale};
     }
 
     @SuppressWarnings("deprecation")
@@ -84,6 +76,14 @@ class AnimationAwareReader {
         //noinspection deprecation
         return getSetting(resolver, Settings.Global.WINDOW_ANIMATION_SCALE,
                 Settings.System.WINDOW_ANIMATION_SCALE);
+    }
+
+    @SuppressWarnings("deprecation")
+    @SuppressLint("InlinedApi")
+    private static float getTransitionAnimationScale(ContentResolver resolver) {
+        //noinspection deprecation
+        return getSetting(resolver, Settings.Global.TRANSITION_ANIMATION_SCALE,
+                Settings.System.TRANSITION_ANIMATION_SCALE);
     }
 
     @SuppressWarnings("deprecation")

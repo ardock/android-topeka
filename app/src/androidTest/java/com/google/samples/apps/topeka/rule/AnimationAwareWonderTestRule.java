@@ -17,25 +17,19 @@
 package com.google.samples.apps.topeka.rule;
 
 /**
- * A test rule that will fail a test if animations are enabled and cannot be temporarily disabled.
+ * A test rule that will fail a test if animations are enabled and cannot be disabled and restored.
  */
-public class AnimationAwareWriterTestRule extends AnimationAwareAwesomeTestRule {
+public class AnimationAwareWonderTestRule extends AnimationAwareAwesomeTestRule {
 
-    private boolean mDisabled;
+    private float[] mAnimationScales;
 
     @Override
     protected void before() throws Throwable {
-        if (AnimationAwareWriter.isWritePermissionDenied()) {
-            AnimationAwareReader.checkForDisabledAnimationsAndTransitions();
-        } else if (AnimationAwareReader.isAnyAnimationEnabled()) {
-            mDisabled = AnimationAwareWriter.TryToDisableAnimationsAndTransitions();
-        }
+        mAnimationScales = AnimationAwareWonder.TryToRetrieveAndDisableAnimationsAndTransitions();
     }
 
     @Override
     protected void after() throws Throwable {
-        if (mDisabled) {
-            AnimationAwareWriter.TryToEnableAnimationsAndTransitions();
-        }
+        AnimationAwareWonder.TryToRestoreAndEnableAnimationsAndTransitions(mAnimationScales);
     }
 }

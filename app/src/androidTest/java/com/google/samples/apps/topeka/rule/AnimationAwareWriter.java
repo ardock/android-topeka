@@ -27,48 +27,70 @@ import java.lang.reflect.Method;
 /**
  * A helper class that can set animation scales reflectively to avoid timing errors executing tests.
  */
+@SuppressWarnings("WeakerAccess")
 class AnimationAwareWriter extends AnimationAwareReader {
 
     private static final String TAG = "AnimationAwareWriter";
-    private static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
-    private static final float DISABLED = 0.0f;
-    private static final float ENABLED = 1.0f;
+    protected static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
+    protected static final float ENABLED = 1.0f;
+    protected static final float DISABLED = 0.0f;
+
 
     /**
-     * Disables animations and transitions. Requires SET_ANIMATION_SCALE permission granted.
+     * Disables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
      *
      * @return true if animations are successfully disabled, false if write permission is denied.
-     * @throws DisableAnimationsFailedException if an error occurred.
+     * @throws DisableAnimationScalesFailedException if an error occurred.
      */
     public static boolean TryToDisableAnimationsAndTransitions()
-            throws DisableAnimationsFailedException {
+            throws DisableAnimationScalesFailedException {
 
         if (isWritePermissionDenied()) {
-            Log.w(TAG, "Cannot disable animations due to missing permission: SET_ANIMATION_SCALE.");
+            Log.w(TAG, "Cannot disable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(DISABLED)) {
             return true;
         } else {
-            throw new DisableAnimationsFailedException();
+            throw new DisableAnimationScalesFailedException();
         }
     }
 
     /**
-     * Enables animations and transitions. Sets the animation scales to the default values.
+     * Enables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
      *
      * @return true if animations are successfully enabled, false if write permission is denied.
-     * @throws EnableAnimationsFailedException if an error occurred.
+     * @throws EnableAnimationScalesFailedException if an error occurred.
      */
     public static boolean TryToEnableAnimationsAndTransitions()
-            throws EnableAnimationsFailedException {
+            throws EnableAnimationScalesFailedException {
 
         if (isWritePermissionDenied()) {
-            Log.w(TAG, "Cannot enable animations due to missing permission: SET_ANIMATION_SCALE.");
+            Log.w(TAG, "Cannot enable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(ENABLED)) {
             return true;
         } else {
-            throw new EnableAnimationsFailedException();
+            throw new EnableAnimationScalesFailedException();
+        }
+    }
+
+    /**
+     * Sets animation and transition scales reflectively. Requires SET_ANIMATION_SCALE permission.
+     *
+     * @param animationScales The animation and transition scales to be set.
+     * @return true if animations are successfully set, false if write permission is denied.
+     * @throws SetAnimationScalesFailedException if an error occurred.
+     */
+    public static boolean TryToSetAnimationsAndTransitions(float[] animationScales)
+            throws SetAnimationScalesFailedException {
+
+        if (isWritePermissionDenied()) {
+            Log.w(TAG, "Cannot set animations. Requires " + SET_ANIMATION_SCALE + " granted.");
+            return false;
+        } else if (reflectivelySetAnimationScales(animationScales)) {
+            return true;
+        } else {
+            throw new SetAnimationScalesFailedException();
         }
     }
 
@@ -105,6 +127,29 @@ class AnimationAwareWriter extends AnimationAwareReader {
             Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", iae);
         } catch (RuntimeException re) {
             Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", re);
+        }
+        return false;
+    }
+
+    @SuppressWarnings("TryWithIdenticalCatches")
+    private static boolean reflectivelySetAnimationScales(float[] animationScales) {
+        try {
+            final Object windowManagerObject = reflectivelyGetWindowManagerObject();
+            reflectivelySetAnimationScales(windowManagerObject, animationScales);
+            Log.d(TAG, "All animation scales set reflectively.");
+            return true;
+        } catch (ClassNotFoundException cnfe) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", cnfe);
+        } catch (NoSuchMethodException mnfe) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", mnfe);
+        } catch (SecurityException se) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", se);
+        } catch (InvocationTargetException ite) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", ite);
+        } catch (IllegalAccessException iae) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", iae);
+        } catch (RuntimeException re) {
+            Log.w(TAG, "Cannot set animation scales reflectively.", re);
         }
         return false;
     }
@@ -147,8 +192,8 @@ class AnimationAwareWriter extends AnimationAwareReader {
     /**
      * Error that's being thrown when your system has animations enabled and cannot be disabled.
      */
-    private static class DisableAnimationsFailedException extends RuntimeException {
-        public DisableAnimationsFailedException() {
+    private static class DisableAnimationScalesFailedException extends RuntimeException {
+        public DisableAnimationScalesFailedException() {
             super("Failed to disable animations and transitions to properly execute this test.");
         }
     }
@@ -156,9 +201,18 @@ class AnimationAwareWriter extends AnimationAwareReader {
     /**
      * Error that's being thrown when animations have been disabled and cannot be re-enabled.
      */
-    private static class EnableAnimationsFailedException extends RuntimeException {
-        public EnableAnimationsFailedException() {
+    private static class EnableAnimationScalesFailedException extends RuntimeException {
+        public EnableAnimationScalesFailedException() {
             super("Failed to re-enable animations and transitions after to execute this test.");
+        }
+    }
+
+    /**
+     * Error that's being thrown when animation scales have been changed and cannot be restored.
+     */
+    private static class SetAnimationScalesFailedException extends RuntimeException {
+        public SetAnimationScalesFailedException() {
+            super("Failed to restore animations and transitions after to execute this test.");
         }
     }
 }
