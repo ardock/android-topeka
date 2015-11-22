@@ -57,8 +57,10 @@ function set-animation-permissions {
 
 # Show unit and instrumentation test results
 function show-travis-test-results {
+     print-format green "Unit Tests"
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/debug/*
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/release/*
+     print-format cyan "Android Tests"
     cat ${TRAVIS_BUILD_DIR}/*/build/outputs/androidTest-results/connected/*
 }
 
@@ -85,12 +87,12 @@ function wait-for-device-ready {
     done
     sleep 15
     adb shell input keyevent 82 &
-    local sleepfactor=22
+    local sleepfactor=18
     local sleeptime=10
     print-format cyan "Waiting for device ready $(($sleepfactor * $sleeptime)) seconds: "
     for ((i=0;i<$sleepfactor;i++));
     do
-        echo "sleeping $sleeptime seconds..."
+        print-format b_red yellow "sleeping... $(($sleepfactor - $i))0 seconds left..."
         sleep $sleeptime
     done
     echo "Ready!!!"
