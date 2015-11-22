@@ -57,11 +57,15 @@ function set-animation-permissions {
 
 # Show unit and instrumentation test results
 function show-travis-test-results {
-     print-format green "Unit Tests"
+    print-format cyan "Unit Tests:"
+    echo
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/debug/*
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/release/*
-     print-format cyan "Android Tests"
+    print-format cyan "Android Tests:"
+    echo
     cat ${TRAVIS_BUILD_DIR}/*/build/outputs/androidTest-results/connected/*
+    print-format reset
+    echo
 }
 
 # Wait for device online
@@ -95,7 +99,7 @@ function wait-for-device-ready {
         print-format b_red yellow "sleeping... $(($sleepfactor - $i))0 seconds left..."
         sleep $sleeptime
     done
-    echo "Ready!!!"
+    print-format reset green "Ready!!!"
 }
 
 # Get foreground color
