@@ -55,12 +55,29 @@ function set-animation-permissions {
     done
 }
 
-# Show unit and instrumentation test results
-function show-travis-test-results {
+# Show debug unit test results
+function show-debug-unit-test-results {
+    echo
     print-format cyan "Unit Tests:"
     echo
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/debug/*
+    print-format reset
+    echo
+}
+
+# Show release unit test results
+function show-release-unit-test-results {
+    echo
+    print-format cyan "Unit Tests:"
+    echo
     cat ${TRAVIS_BUILD_DIR}/*/build/test-results/release/*
+    print-format reset
+    echo
+}
+
+# Show instrumentation test results
+function show-android-test-results {
+    echo
     print-format cyan "Android Tests:"
     echo
     cat ${TRAVIS_BUILD_DIR}/*/build/outputs/androidTest-results/connected/*
@@ -93,7 +110,7 @@ function wait-for-device-ready {
     adb shell input keyevent 82 &
     local sleepfactor=18
     local sleeptime=10
-    print-format cyan "Waiting for device ready $(($sleepfactor * $sleeptime)) seconds: "
+    print-format cyan "Waiting for device ready: "
     for ((i=0;i<$sleepfactor;i++));
     do
         print-format b_red yellow "sleeping... $(($sleepfactor - $i))0 seconds left..."
@@ -292,7 +309,9 @@ function print-myhelp {
     print-mytext "\tinstall-and-update-sdk : Install and update SDK."
     print-mytext "\tread-pre-dexing-option : Read pre-dexing option from targets."
     print-mytext "\tset-animation-permissions : Set animation permissions for all devices."
-    print-mytext "\tshow-travis-test-results : Show test results on Travis web."
+    print-mytext "\tshow-debug-unit-test-results : Show debug unit test results."
+    print-mytext "\tshow-release-unit-test-results : Show release unit test results."
+    print-mytext "\tshow-android-test-results : Show android test results."
     print-mytext "\twait-for-device-online : Wait for device online."
     print-mytext "\twait-for-device-ready : Wait for device ready."
     print-mytext "\tprint-mypath : Print and return the full directory name of this script."
@@ -313,7 +332,9 @@ function print-mymenu {
             "install-and-update-sdk") install-and-update-sdk;;
             "read-pre-dexing-option") read-pre-dexing-option;;
             "set-animation-permissions") set-animation-permissions;;
-            "show-travis-test-results") show-travis-test-results;;
+            "show-debug-unit-test-results") show-debug-unit-test-results;;
+            "show-release-unit-test-results") show-release-unit-test-results;;
+            "show-android-test-results") show-android-test-results;;
             "wait-for-device-online") wait-for-device-online;;
             "wait-for-device-ready") wait-for-device-ready;;
             "print-format") shift; print-format "$@"; break;;
