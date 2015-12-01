@@ -8,6 +8,7 @@
 
 # Execute android tests
 function android-test {
+    adb shell input keyevent 82 &
     ./gradlew assembleDebug -PdisablePreDex
     ./gradlew assembleDebugAndroidTest -PdisablePreDex
     adb install app/build/outputs/apk/app-debug.apk
