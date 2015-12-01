@@ -53,7 +53,6 @@ public class SignInFragment extends Fragment {
     private EditText mFirstName;
     private EditText mLastInitial;
     private Avatar mSelectedAvatar;
-    private View mSelectedAvatarView;
     private GridView mAvatarGrid;
     private FloatingActionButton mDoneFab;
     private boolean edit;
@@ -69,8 +68,10 @@ public class SignInFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            int savedAvatarIndex = savedInstanceState.getInt(KEY_SELECTED_AVATAR_INDEX);
-            mSelectedAvatar = Avatar.values()[savedAvatarIndex];
+            final int savedAvatarIndex = savedInstanceState.getInt(KEY_SELECTED_AVATAR_INDEX);
+            if (savedAvatarIndex != GridView.INVALID_POSITION) {
+                mSelectedAvatar = Avatar.values()[savedAvatarIndex];
+            }
         }
         super.onCreate(savedInstanceState);
     }
@@ -92,7 +93,11 @@ public class SignInFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(KEY_SELECTED_AVATAR_INDEX, mSelectedAvatar.ordinal());
+        if (mAvatarGrid != null) {
+            outState.putInt(KEY_SELECTED_AVATAR_INDEX, mAvatarGrid.getCheckedItemPosition());
+        } else {
+            outState.putInt(KEY_SELECTED_AVATAR_INDEX, GridView.INVALID_POSITION);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -101,7 +106,7 @@ public class SignInFragment extends Fragment {
         assurePlayerInit();
         checkIsInEditMode();
 
-        if (null == mPlayer || edit) {
+        if (mPlayer == null || edit) {
             view.findViewById(R.id.empty).setVisibility(View.GONE);
             view.findViewById(R.id.content).setVisibility(View.VISIBLE);
             initContentViews(view);
@@ -117,7 +122,7 @@ public class SignInFragment extends Fragment {
     private void checkIsInEditMode() {
         final Bundle arguments = getArguments();
         //noinspection SimplifiableIfStatement
-        if (null == arguments) {
+        if (arguments == null) {
             edit = false;
         } else {
             edit = arguments.getBoolean(ARG_EDIT, false);
@@ -133,7 +138,7 @@ public class SignInFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // showing the floating action button if text is entered
+                // hiding the floating action button if text is empty
                 if (s.length() == 0) {
                     mDoneFab.hide();
                 }
@@ -141,10 +146,9 @@ public class SignInFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (mSelectedAvatarView != null || mSelectedAvatar != null) {
-                    if (mFirstName.getText().length() > 0 && mLastInitial.getText().length() > 0) {
-                        mDoneFab.show();
-                    }
+                // showing the floating action button if avatar is selected and input data is valid
+                if (isAvatarSelected() && isInputDataValid()) {
+                    mDoneFab.show();
                 }
             }
         };
@@ -163,12 +167,8 @@ public class SignInFragment extends Fragment {
                         removeDoneFab(new Runnable() {
                             @Override
                             public void run() {
-                                if (null == mSelectedAvatarView) {
-                                    performSignInWithTransition(mAvatarGrid.getChildAt(
-                                            mSelectedAvatar.ordinal()));
-                                } else {
-                                    performSignInWithTransition(mSelectedAvatarView);
-                                }
+                                final View sharedView = getSharedViewForTransition();
+                                performSignInWithTransition(sharedView);
                             }
                         });
                         break;
@@ -179,6 +179,40 @@ public class SignInFragment extends Fragment {
                 }
             }
         });
+    }
+
+    /**
+     * Returns the selected avatar view to be used as a shared view in transitions.
+     *
+     * If the selected avatar view is not visible, returns the FAB view as a work around.
+     *
+     * @return The checked avatar view if visible, the FAB view otherwise.
+     */
+    private View getSharedViewForTransition() {
+        final int selectedAvatarPosition = getVisibleSelectedAvatarPosition();
+
+        if (selectedAvatarPosition == GridView.INVALID_POSITION) {
+            return mDoneFab;
+        }
+
+        return mAvatarGrid.getChildAt(selectedAvatarPosition);
+    }
+
+    /**
+     * Returns the selected avatar position or an error value if it's not visible.
+     *
+     * @return The position of the checked avatar if visible, GridView.INVALID_POSITION otherwise.
+     */
+    private int getVisibleSelectedAvatarPosition() {
+        final int position = mSelectedAvatar.ordinal();
+        final int firstPosition = mAvatarGrid.getFirstVisiblePosition();
+        final int lastPosition = mAvatarGrid.getLastVisiblePosition();
+
+        if (position < firstPosition || position > lastPosition) {
+            return GridView.INVALID_POSITION;
+        }
+
+        return position - firstPosition;
     }
 
     private void removeDoneFab(@Nullable Runnable endAction) {
@@ -196,9 +230,9 @@ public class SignInFragment extends Fragment {
         mAvatarGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedAvatarView = view;
                 mSelectedAvatar = Avatar.values()[position];
-                if (mFirstName.getText().length() > 0 && mLastInitial.getText().length() > 0) {
+                // showing the floating action button if input data is valid
+                if (isInputDataValid()) {
                     mDoneFab.show();
                 }
             }
@@ -222,7 +256,7 @@ public class SignInFragment extends Fragment {
 
     private void initContents() {
         assurePlayerInit();
-        if (null != mPlayer) {
+        if (mPlayer != null) {
             mFirstName.setText(mPlayer.getFirstName());
             mLastInitial.setText(mPlayer.getLastInitial());
             mSelectedAvatar = mPlayer.getAvatar();
@@ -230,7 +264,7 @@ public class SignInFragment extends Fragment {
     }
 
     private void assurePlayerInit() {
-        if (null == mPlayer) {
+        if (mPlayer == null) {
             mPlayer = PreferencesHelper.getPlayer(getActivity());
         }
     }
@@ -239,6 +273,14 @@ public class SignInFragment extends Fragment {
         mPlayer = new Player(mFirstName.getText().toString(), mLastInitial.getText().toString(),
                 mSelectedAvatar);
         PreferencesHelper.writeToPreferences(activity, mPlayer);
+    }
+
+    private boolean isAvatarSelected() {
+        return mSelectedAvatar != null;
+    }
+
+    private boolean isInputDataValid() {
+        return PreferencesHelper.isInputDataValid(mFirstName.getText(), mLastInitial.getText());
     }
 
     /**
