@@ -320,6 +320,7 @@ function print-myhelp {
     print-mytext "Usage:"
     print-mytext "\tacib action [action2 action3 ... actionN]"
     print-mytext "Actions:"
+    print-mytext "\tandroid-test : Run android tests."
     print-mytext "\tcreate-and-start-device : Create and start device."
     print-mytext "\tinstall-and-update-sdk : Install and update SDK."
     print-mytext "\tread-pre-dexing-option : Read pre-dexing option from targets."
@@ -342,7 +343,7 @@ function print-mymenu {
     while [ -n "$1" ] ; do
         print-format yellow "Executing task [ ${1} ]:"
         case "$1" in
-            "export-environment-variables") export-environment-variables;;
+            "android-test") android-test;;
             "create-and-start-device") create-and-start-device;;
             "install-and-update-sdk") install-and-update-sdk;;
             "read-pre-dexing-option") read-pre-dexing-option;;
