@@ -16,7 +16,19 @@
 
 def adb = android.getAdbExe().toString()
 
-task grantSetAnimationScalePermission(type: Exec, dependsOn: 'installDebug') {
+task installFixDebug(type: Exec) {
+    group = 'install'
+    description = 'Workaround for https://code.google.com/p/android/issues/detail?id=189764'
+    commandLine "$adb install build/outputs/apk/app-debug.apk".split(' ')
+}
+
+task installFixDebugAndroidTest(type: Exec, dependsOn: 'installFixDebug') {
+    group = 'install'
+    description = 'Workaround for https://code.google.com/p/android/issues/detail?id=189764'
+    commandLine "$adb install build/outputs/apk/app-debug-androidTest-unaligned.apk".split(' ')
+}
+
+task grantSetAnimationScalePermission(type: Exec, dependsOn: 'installFixDebugAndroidTest') {
     group = 'verification'
     description = 'Grant SET_ANIMATION_SCALE permission for testing.'
     def saspermission = 'android.permission.SET_ANIMATION_SCALE'

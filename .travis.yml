@@ -56,6 +56,8 @@ install:
   - ./execute wait-for-device-online # Start adbd, wait for device connected and show android serial
   - ./gradlew --version # Show version and download Gradle Wrapper when is not present in cache
   - ./gradlew clean # Clean project and download Android dependencies when are not present in cache
+  - ./gradlew assembleDebug ${PREDEX_OPT:-}
+  - ./gradlew assembleDebugAndroidTest ${PREDEX_OPT:-}
   - ./gradlew test ${PREDEX_OPT:-} # Run unit tests for all variants
   - ./execute show-debug-unit-test-results # Print debug unit test results on Travis-ci web
   - ./execute show-release-unit-test-results # Print release unit test results on Travis-ci web
@@ -64,8 +66,7 @@ before_script:
   - ./execute wait-for-device-ready # Wait until device is ready: stopped state or custom sleep time
 
 script:
-#  - travis_wait ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
-  - travis_wait ./execute android-test
+  - travis_wait ./gradlew cAT ${PREDEX_OPT:-} # Install and runs android tests for all flavors
 
 after_script:
   - ./execute show-android-test-results # Print intrumentation test results on Travis-ci web
