@@ -16,7 +16,7 @@ notifications:
 env:
   global: # ADB_INSTALL_TIMEOUT=2 minutes by default. See Acib script for other default values.
     - ADB_INSTALL_TIMEOUT=8
-#    - INSTALL_PKGS='build-tools-23.0.1,android-23'
+#    - INSTALL_PKGS='build-tools-23.0.2,android-23'
 #    - UPDATE_PKGS='platform-tools,tools,extra-android-m2repository,extra-google-m2repository'
     - GRADLE_USER_HOME="${TRAVIS_BUILD_DIR}/gradle"
     - AVD_DEBUG='init,avd_config,nand_limits,keys,adb,adbserver,adbclient'
