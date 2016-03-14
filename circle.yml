@@ -8,7 +8,7 @@ test:
   override:
     # start the emulator
     - mksdcard -l e 512M mysdcard.img
-    - emulator -avd circleci-android19 -no-audio -no-window -no-boot-anim -sdcard mysdcard.img:
+    - emulator -avd circleci-android19 -no-audio -no-window -sdcard mysdcard.img:
         background: true
         parallel: true
     # wait for it to have booted
