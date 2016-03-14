@@ -3,6 +3,8 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter platform-tools
     - echo y | android update sdk --no-ui --all --filter tools
     - echo y | android update sdk --no-ui --all --filter build-tools-23.0.2
+    - echo y | android update sdk --no-ui --all --filter extra-android-m2repository
+    - echo y | android update sdk --no-ui --all --filter extra-google-m2repository
 
 test:
   override:
@@ -12,11 +14,11 @@ test:
         background: true
         parallel: true
     # wait for it to have booted
-    - sleep 222
+    - sleep 180
     - adb shell input keyevent 82:
         background: true
     # run tests  against the emulator.
-    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedCheck
+    - ADB_INSTALL_TIMEOUT=10 ./gradlew clean cAT -PdisablePreDex
     # copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
     # copy the test results to the test results directory.
