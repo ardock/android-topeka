@@ -25,6 +25,7 @@ import android.view.View;
 import com.google.samples.apps.topeka.R;
 import com.google.samples.apps.topeka.helper.PreferencesHelper;
 import com.google.samples.apps.topeka.model.Avatar;
+import com.google.samples.apps.topeka.rule.AnimationAwareWonderTestRule;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -66,6 +67,10 @@ public class SignInActivityTest {
                     PreferencesHelper.signOut(InstrumentationRegistry.getTargetContext());
                 }
             };
+
+    @Rule
+    public AnimationAwareWonderTestRule mAnimationAwareTestRule =
+            new AnimationAwareWonderTestRule();
 
     @Before
     public void clearPreferences() throws Exception {

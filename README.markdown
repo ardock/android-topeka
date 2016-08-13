@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ardock/android-topeka.svg?branch=acib)](https://travis-ci.org/ardock/android-topeka)
+
 # Topeka for Android
 
 A fun to play quiz that showcases material design on Android

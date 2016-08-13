@@ -30,6 +30,7 @@ import com.google.samples.apps.topeka.model.Avatar;
 import com.google.samples.apps.topeka.model.Category;
 import com.google.samples.apps.topeka.model.Player;
 import com.google.samples.apps.topeka.persistence.TopekaDatabaseHelper;
+import com.google.samples.apps.topeka.rule.AnimationAwareWonderTestRule;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -71,6 +72,10 @@ public class CategorySelectionActivityTest {
                     return CategorySelectionActivity.getStartIntent(mTargetContext, player);
                 }
             };
+
+    @Rule
+    public AnimationAwareWonderTestRule mAnimationAwareTestRule =
+            new AnimationAwareWonderTestRule();
 
     @Before
     public void loadCategories() {

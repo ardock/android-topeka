@@ -78,6 +78,10 @@ public abstract class BaseQuizActivityTest {
                 }
             };
 
+    @Rule
+    public final AnimationAwareWonderTestRule mAnimationAwareTestRule =
+            new AnimationAwareWonderTestRule();
+
     private List<Category> mCategories;
 
     /**
