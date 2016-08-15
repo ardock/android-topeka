@@ -47,6 +47,7 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -161,6 +162,7 @@ public class SolveQuizUtil {
     private static void setPickerProgress(final PickerQuiz pickerQuiz) {
         onView(allOf(isDescendantOfA(hasSibling(withText(pickerQuiz.getQuestion()))),
                 withId(R.id.seekbar)))
+                .perform(scrollTo())
                 .perform(click())
                 .perform(new ViewAction() {
                     @Override
