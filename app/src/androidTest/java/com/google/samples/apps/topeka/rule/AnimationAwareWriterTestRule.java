@@ -28,14 +28,14 @@ public class AnimationAwareWriterTestRule extends AnimationAwareAwesomeTestRule 
         if (AnimationAwareWriter.isWritePermissionDenied()) {
             AnimationAwareReader.checkForDisabledAnimationsAndTransitions();
         } else if (AnimationAwareReader.isAnyAnimationEnabled()) {
-            mDisabled = AnimationAwareWriter.TryToDisableAnimationsAndTransitions();
+            mDisabled = AnimationAwareWriter.tryToDisableAnimationsAndTransitions();
         }
     }
 
     @Override
     protected void after() throws Throwable {
         if (mDisabled) {
-            AnimationAwareWriter.TryToEnableAnimationsAndTransitions();
+            AnimationAwareWriter.tryToEnableAnimationsAndTransitions();
         }
     }
 }

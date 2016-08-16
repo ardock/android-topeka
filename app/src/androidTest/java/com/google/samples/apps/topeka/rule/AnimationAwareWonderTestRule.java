@@ -25,11 +25,11 @@ public class AnimationAwareWonderTestRule extends AnimationAwareAwesomeTestRule 
 
     @Override
     protected void before() throws Throwable {
-        mAnimationScales = AnimationAwareWonder.TryToRetrieveAndDisableAnimationsAndTransitions();
+        mAnimationScales = AnimationAwareWonder.tryToRetrieveAndDisableAnimationsAndTransitions();
     }
 
     @Override
     protected void after() throws Throwable {
-        AnimationAwareWonder.TryToRestoreAndEnableAnimationsAndTransitions(mAnimationScales);
+        AnimationAwareWonder.tryToRestoreAndEnableAnimationsAndTransitions(mAnimationScales);
     }
 }

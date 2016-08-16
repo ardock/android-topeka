@@ -31,7 +31,7 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
      * @return The current animation scales if have been successfully disabled, null otherwise.
      * @throws RetrieveAndDisableAnimationsFailedException if an error occurred or new scales added.
      */
-    public static float[] TryToRetrieveAndDisableAnimationsAndTransitions()
+    public static float[] tryToRetrieveAndDisableAnimationsAndTransitions()
             throws RetrieveAndDisableAnimationsFailedException {
 
         final float[] currentScales = getAnimationScales();
@@ -42,7 +42,7 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
 
         final float[] disabledScales = new float[]{DISABLED, DISABLED, DISABLED};
 
-        if (currentScales.length == 3 && TryToSetAnimationsAndTransitions(disabledScales)) {
+        if (currentScales.length == 3 && tryToSetAnimationsAndTransitions(disabledScales)) {
             return currentScales;
         } else {
             throw new RetrieveAndDisableAnimationsFailedException();
@@ -60,12 +60,12 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
      * @return true if animations are successfully restored and enabled, false otherwise.
      * @throws RestoreAndEnableAnimationsFailedException if an error occurred or new scales added.
      */
-    public static boolean TryToRestoreAndEnableAnimationsAndTransitions(float[] savedScales)
+    public static boolean tryToRestoreAndEnableAnimationsAndTransitions(float[] savedScales)
             throws RestoreAndEnableAnimationsFailedException {
 
         if (savedScales == null || allScalesDisabled(savedScales)) {
             return false;
-        } else if (savedScales.length == 3 && TryToSetAnimationsAndTransitions(savedScales)) {
+        } else if (savedScales.length == 3 && tryToSetAnimationsAndTransitions(savedScales)) {
             return true;
         } else {
             throw new RestoreAndEnableAnimationsFailedException();

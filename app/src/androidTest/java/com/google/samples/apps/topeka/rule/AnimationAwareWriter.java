@@ -42,7 +42,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
      * @return true if animations are successfully disabled, false if write permission is denied.
      * @throws DisableAnimationScalesFailedException if an error occurred.
      */
-    public static boolean TryToDisableAnimationsAndTransitions()
+    public static boolean tryToDisableAnimationsAndTransitions()
             throws DisableAnimationScalesFailedException {
 
         if (isWritePermissionDenied()) {
@@ -61,7 +61,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
      * @return true if animations are successfully enabled, false if write permission is denied.
      * @throws EnableAnimationScalesFailedException if an error occurred.
      */
-    public static boolean TryToEnableAnimationsAndTransitions()
+    public static boolean tryToEnableAnimationsAndTransitions()
             throws EnableAnimationScalesFailedException {
 
         if (isWritePermissionDenied()) {
@@ -81,7 +81,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
      * @return true if animations are successfully set, false if write permission is denied.
      * @throws SetAnimationScalesFailedException if an error occurred.
      */
-    public static boolean TryToSetAnimationsAndTransitions(float[] animationScales)
+    public static boolean tryToSetAnimationsAndTransitions(float[] animationScales)
             throws SetAnimationScalesFailedException {
 
         if (isWritePermissionDenied()) {
