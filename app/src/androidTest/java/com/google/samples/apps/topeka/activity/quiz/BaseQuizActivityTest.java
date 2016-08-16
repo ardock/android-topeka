@@ -33,7 +33,7 @@ import com.google.samples.apps.topeka.model.Category;
 import com.google.samples.apps.topeka.model.Player;
 import com.google.samples.apps.topeka.model.quiz.Quiz;
 import com.google.samples.apps.topeka.persistence.TopekaDatabaseHelper;
-import com.google.samples.apps.topeka.rule.AnimationAwareWriterTestRule;
+import com.google.samples.apps.topeka.rule.AnimationAwareWonderTestRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -80,8 +80,8 @@ public abstract class BaseQuizActivityTest {
             };
 
     @Rule
-    public final AnimationAwareWriterTestRule mAnimationAwareTestRule =
-            new AnimationAwareWriterTestRule();
+    public final AnimationAwareWonderTestRule mAnimationAwareTestRule =
+            new AnimationAwareWonderTestRule();
 
     private List<Category> mCategories;
 

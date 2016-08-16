@@ -30,6 +30,7 @@ import android.util.Log;
 class AnimationAwareReader {
 
     private static final String TAG = "AnimationAwareReader";
+    private static final float DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND = 1.0f;
 
     /**
      * Throws an exception when your system has animations enabled and should not.
@@ -49,7 +50,7 @@ class AnimationAwareReader {
      *
      * @return true if any animation or transition is enabled on a device, false otherwise.
      */
-    public static boolean isAnyAnimationEnabled() {
+    private static boolean isAnyAnimationEnabled() {
         ContentResolver resolver = InstrumentationRegistry.getTargetContext().getContentResolver();
         final float windowAnimationScale = getWindowAnimationScale(resolver);
         final float transitionAnimationScale = getTransitionAnimationScale(resolver);
@@ -112,7 +113,7 @@ class AnimationAwareReader {
             return Settings.Global.getFloat(resolver, setting);
         } catch (Settings.SettingNotFoundException e) {
             Log.w(TAG, "getSystemSetting: Setting not found", e);
-            return 0;
+            return DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND;
         }
     }
 
@@ -121,7 +122,7 @@ class AnimationAwareReader {
             return Settings.System.getFloat(resolver, setting);
         } catch (Settings.SettingNotFoundException e) {
             Log.w(TAG, "getSystemSetting: Setting not found", e);
-            return 0;
+            return DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND;
         }
     }
 

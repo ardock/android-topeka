@@ -27,12 +27,11 @@ import java.lang.reflect.Method;
 /**
  * A helper class that can set animation scales reflectively to avoid timing errors executing tests.
  */
-@SuppressWarnings("WeakerAccess")
 class AnimationAwareWriter extends AnimationAwareReader {
 
     private static final String TAG = "AnimationAwareWriter";
-    protected static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
-    protected static final float ENABLED = 1.0f;
+    private static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
+    private static final float ENABLED = 1.0f;
     protected static final float DISABLED = 0.0f;
 
 
@@ -99,7 +98,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
      *
      * @return true if the permission to set animation scales have been denied, false otherwise.
      */
-    public static boolean isWritePermissionDenied() {
+    private static boolean isWritePermissionDenied() {
         return PackageManager.PERMISSION_DENIED == InstrumentationRegistry.getTargetContext()
                 .checkCallingOrSelfPermission(SET_ANIMATION_SCALE);
     }
