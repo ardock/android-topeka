@@ -30,7 +30,7 @@ import com.google.samples.apps.topeka.model.Avatar;
 import com.google.samples.apps.topeka.model.Category;
 import com.google.samples.apps.topeka.model.Player;
 import com.google.samples.apps.topeka.persistence.TopekaDatabaseHelper;
-import com.google.samples.apps.topeka.rule.AnimationAwareWonderTestRule;
+import com.google.samples.apps.topeka.rule.AnimationAwareWriterTestRule;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,8 +74,8 @@ public class CategorySelectionActivityTest {
             };
 
     @Rule
-    public AnimationAwareWonderTestRule mAnimationAwareTestRule =
-            new AnimationAwareWonderTestRule();
+    public AnimationAwareWriterTestRule mAnimationAwareTestRule =
+            new AnimationAwareWriterTestRule();
 
     @Before
     public void loadCategories() {
