@@ -25,11 +25,7 @@ public class AnimationAwareWriterTestRule extends AnimationAwareAwesomeTestRule 
 
     @Override
     protected void before() throws Throwable {
-        if (AnimationAwareWriter.isWritePermissionDenied()) {
-            AnimationAwareReader.checkForDisabledAnimationsAndTransitions();
-        } else if (AnimationAwareReader.isAnyAnimationEnabled()) {
-            mDisabled = AnimationAwareWriter.tryToDisableAnimationsAndTransitions();
-        }
+        mDisabled = AnimationAwareWriter.tryToDisableAnimationsAndTransitions();
     }
 
     @Override
