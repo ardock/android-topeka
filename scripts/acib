@@ -123,6 +123,7 @@ function wait-for-device-ready {
     done
     sleep 30
     adb shell input keyevent 82 &
+    sleep 15
 #    local sleepfactor=18
 #    local sleeptime=10
 #    print-format cyan "Waiting for device ready: "
@@ -311,11 +312,11 @@ function print-myname {
     print-mytext "`basename ${0}`"
 }
 
-# Print my name delayed 8 minutes
-# Print and return the name of this script
-function print-myname-delayed {
+# Print delayed 8 minutes
+# Print and return the text of this script delayed
+function print-delayed {
     sleep 480
-    print-mytext "`basename ${0}`"
+    printf .
 }
 
 # Print my help
@@ -339,7 +340,7 @@ function print-myhelp {
     print-mytext "\twait-for-device-ready : Wait for device ready."
     print-mytext "\tprint-mypath : Print and return the full directory name of this script."
     print-mytext "\tprint-myname : Print and return the name of this script."
-    print-mytext "\tprint-myname-delayed : Print and return the name of this script delayed 8 min."
+    print-mytext "\tprint-delayed : Print and return the text of this script delayed."
     print-mytext "\tprint-myhelp : Print this help about the script usage."
     reset-format
 }
@@ -364,7 +365,7 @@ function print-mymenu {
             "print-format") shift; print-format "$@"; break;;
             "print-mypath") print-mypath;;
             "print-myname") print-myname;;
-            "print-myname-delayed") print-myname-delayed;;
+            "print-delayed") print-delayed;;
             "-h" | "--help" | "print-myhelp") print-myhelp;;
             "-v" | "--verbose") PRINT_VERBOSE=true && print-format yellow "Enabling verbose mode:";;
             "-s" | "--silent") print-format yellow "Disabled verbose mode." && PRINT_VERBOSE=false;;
