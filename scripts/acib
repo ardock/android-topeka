@@ -316,7 +316,7 @@ function print-myname {
 # Print and return the text of this script delayed
 function print-delayed {
     sleep 480
-    printf .
+    print-mytext "`echo "\n"`"
 }
 
 # Print my help
