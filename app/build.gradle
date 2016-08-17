@@ -41,7 +41,7 @@ android {
 
     // This enables long timeouts required on slow environments, e.g. Travis
     adbOptions {
-        timeOutInMs 15 * 60 * 1000  // 15 minutes
+        timeOutInMs 10 * 60 * 1000  // 10 minutes
         installOptions "-d","-t"
     }
 
