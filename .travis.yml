@@ -22,32 +22,37 @@ env:
 matrix:
   include:
     - env: AVD_TARGET=android-14 ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-14,sys-img-armeabi-v7a-android-14
     - env: AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-15,sys-img-armeabi-v7a-android-15
     - env: AVD_TARGET=android-16 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-22 ARGS='-PdisablePreDex' TARGET_PKGS=android-22,sys-img-armeabi-v7a-android-22
-    - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
-    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-    - env: AVD_TARGET='Google Inc.:Google APIs:22' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=android-22,addon-google_apis-google-22,sys-img-armeabi-v7a-addon-google_apis-google-22
-    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
+           TARGET_PKGS=android-16,sys-img-armeabi-v7a-android-16
+#    - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-21 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-22 ARGS='-PdisablePreDex' TARGET_PKGS=android-22,sys-img-armeabi-v7a-android-22
+#    - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
+    - env: AVD_TARGET=android-21 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-google_apis-21
+    - env: AVD_TARGET=android-22 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-22,addon-google_apis-google-22,sys-img-armeabi-v7a-google_apis-22
+#    - env: AVD_TARGET=android-23 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+#           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-google_apis-23
   allow_failures:
     - env: AVD_TARGET=android-14 ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-14,sys-img-armeabi-v7a-android-14
     - env: AVD_TARGET=android-15 ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-15,sys-img-armeabi-v7a-android-15
     - env: AVD_TARGET=android-16 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-18 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
-    - env: AVD_TARGET='Google Inc.:Google APIs:21' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-addon-google_apis-google-21
-    - env: AVD_TARGET='Google Inc.:Google APIs:22' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=android-22,addon-google_apis-google-22,sys-img-armeabi-v7a-addon-google_apis-google-22
-    - env: AVD_TARGET='Google Inc.:Google APIs:23' AVD_TAG=google_apis ARGS='-PdisablePreDex'
-           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-addon-google_apis-google-23
+           TARGET_PKGS=android-16,sys-img-armeabi-v7a-android-16
+#    - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
+    - env: AVD_TARGET=android-21 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=addon-google_apis-google-21,sys-img-armeabi-v7a-google_apis-21
+    - env: AVD_TARGET=android-22 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+           TARGET_PKGS=android-22,addon-google_apis-google-22,sys-img-armeabi-v7a-google_apis-22
+#    - env: AVD_TARGET=android-23 AVD_TAG=google_apis ARGS='-PdisablePreDex'
+#           TARGET_PKGS=addon-google_apis-google-23,sys-img-armeabi-v7a-google_apis-23
   fast_finish: false
 
 before_install:
