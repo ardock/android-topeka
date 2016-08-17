@@ -63,7 +63,7 @@ before_script:
   - ./execute wait-for-device-ready # Wait until device is ready. Stopped state or custom sleep time
 
 script:
-  - travis_wait 15 ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
+  - travis_wait 14 ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
 #  - travis_wait ./execute android-test
 
 after_script:
