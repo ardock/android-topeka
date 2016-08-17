@@ -30,6 +30,24 @@ public abstract class AnimationAwareAwesomeTestRule implements TestRule {
         return new AnimationAwareAwesomeStatement(base);
     }
 
+    /**
+     * Override to set up your specific animation aware rule. Disable animations for example.
+     *
+     * @throws Throwable if setup fails (which will disable {@code after()} method).
+     */
+    protected void before() throws Throwable {
+        // do nothing
+    }
+
+    /**
+     * Override to tear down your specific animation aware rule. Re-enable animations for example.
+     *
+     * @throws Throwable if tear down fails (which would affect future animation related tests).
+     */
+    protected void after() throws Throwable {
+        // do nothing
+    }
+
     private class AnimationAwareAwesomeStatement extends Statement {
 
         private Statement mBase;
@@ -49,21 +67,4 @@ public abstract class AnimationAwareAwesomeTestRule implements TestRule {
         }
     }
 
-    /**
-     * Override to set up your specific animation aware rule. Disable animations for example.
-     *
-     * @throws Throwable if setup fails (which will disable {@code after()} method).
-     */
-    protected void before() throws Throwable {
-        // do nothing
-    }
-
-    /**
-     * Override to tear down your specific animation aware rule. Re-enable animations for example.
-     *
-     * @throws Throwable if tear down fails (which would affect future animation related tests).
-     */
-    protected void after() throws Throwable {
-        // do nothing
-    }
 }

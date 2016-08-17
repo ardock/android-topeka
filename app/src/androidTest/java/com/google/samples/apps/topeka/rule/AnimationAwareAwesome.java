@@ -17,13 +17,8 @@
 package com.google.samples.apps.topeka.rule;
 
 /**
- * A test rule that will fail a test if animations or transitions are enabled on a device.
+ * An interface for triple-A helper classes used to manage animation scales to avoid timing errors.
  */
-public class AnimationAwareReaderTestRule extends AnimationAwareAwesomeTestRule {
-
-    @Override
-    protected void before() throws Throwable {
-        AnimationAwareReader.checkForDisabledAnimationsAndTransitions();
-    }
+public interface AnimationAwareAwesome {
 
 }

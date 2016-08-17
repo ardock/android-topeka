@@ -19,7 +19,7 @@ package com.google.samples.apps.topeka.rule;
 /**
  * A test rule that will fail a test if animations are enabled and cannot be disabled and restored.
  */
-public class AnimationAwareWonderTestRule extends AnimationAwareAwesomeTestRule {
+public class AnimationAwareWonderTestRule extends AnimationAwareWriterTestRule {
 
     private float[] mAnimationScales;
 
@@ -32,4 +32,5 @@ public class AnimationAwareWonderTestRule extends AnimationAwareAwesomeTestRule 
     protected void after() throws Throwable {
         AnimationAwareWonder.tryToRestoreAndEnableAnimationsAndTransitions(mAnimationScales);
     }
+
 }

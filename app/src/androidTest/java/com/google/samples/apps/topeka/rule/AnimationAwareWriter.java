@@ -30,15 +30,26 @@ import java.lang.reflect.Method;
 class AnimationAwareWriter extends AnimationAwareReader {
 
     private static final String TAG = "AnimationAwareWriter";
-    private static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
-    private static final float ENABLED = 1.0f;
-    protected static final float DISABLED = 0.0f;
 
+    /**
+     * Constant permission name.
+     */
+    private static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
+
+    /**
+     * Enabled scale value.
+     */
+    private static final float ENABLED = 1.0f;
+
+    /**
+     * Disabled scale value.
+     */
+    private static final float DISABLED = 0.0f;
 
     /**
      * Disables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
      *
-     * @return true if animations are successfully disabled, false if write permission is denied.
+     * @return True if animations are successfully disabled. False if write permission is denied.
      * @throws DisableAnimationScalesFailedException if an error occurred.
      */
     public static boolean tryToDisableAnimationsAndTransitions()
@@ -57,7 +68,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
     /**
      * Enables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
      *
-     * @return true if animations are successfully enabled, false if write permission is denied.
+     * @return True if animations are successfully enabled. False if write permission is denied.
      * @throws EnableAnimationScalesFailedException if an error occurred.
      */
     public static boolean tryToEnableAnimationsAndTransitions()
@@ -74,10 +85,32 @@ class AnimationAwareWriter extends AnimationAwareReader {
     }
 
     /**
+     * Gets animation and transition scales reflectively. Requires SET_ANIMATION_SCALE permission.
+     *
+     * @return The current animation scales if successfully, null if required permission is denied.
+     * @throws GetAnimationScalesFailedException if an error occurred.
+     */
+    public static float[] tryToGetAnimationsAndTransitions()
+            throws GetAnimationScalesFailedException {
+
+        if (isWritePermissionDenied()) {
+            Log.w(TAG, "Cannot get animations. Requires " + SET_ANIMATION_SCALE + " granted.");
+            return null;
+        } else {
+            float[] animationScales = reflectivelyGetAnimationScales();
+            if (animationScales != null) {
+                return animationScales;
+            } else {
+                throw new GetAnimationScalesFailedException();
+            }
+        }
+    }
+
+    /**
      * Sets animation and transition scales reflectively. Requires SET_ANIMATION_SCALE permission.
      *
      * @param animationScales The animation and transition scales to be set.
-     * @return true if animations are successfully set, false if write permission is denied.
+     * @return True if animations are successfully set. False if write permission is denied.
      * @throws SetAnimationScalesFailedException if an error occurred.
      */
     public static boolean tryToSetAnimationsAndTransitions(float[] animationScales)
@@ -94,40 +127,61 @@ class AnimationAwareWriter extends AnimationAwareReader {
     }
 
     /**
-     * Determines whether you have been denied the permission to set animation scales.
+     * Determines whether the permission to set animation scales has been denied to the user.
      *
-     * @return true if the permission to set animation scales have been denied, false otherwise.
+     * @return True if the permission to set animation scales have been denied, false otherwise.
      */
-    private static boolean isWritePermissionDenied() {
+    public static boolean isWritePermissionDenied() {
         return PackageManager.PERMISSION_DENIED == InstrumentationRegistry.getTargetContext()
                 .checkCallingOrSelfPermission(SET_ANIMATION_SCALE);
     }
 
+    /**
+     * Determines whether all the scales received as parameter are disabled.
+     *
+     * @param scales The scales to be checked.
+     * @return True if all the scales are disabled. False otherwise.
+     */
+    public static boolean allScalesDisabled(float[] scales) {
+        for (float scale : scales) {
+            if (scale != DISABLED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns an array of length dimension containing disabled scales.
+     *
+     * @param length The length of the array.
+     * @return The disabled scales array.
+     */
+    public static float[] createDisabledScalesArray(int length) {
+        return new float[length];
+    }
+
     @SuppressWarnings("TryWithIdenticalCatches")
-    private static boolean reflectivelySetAnimationScalesTo(float animationScale) {
+    private static float[] reflectivelyGetAnimationScales() {
         try {
             final Object windowManagerObject = reflectivelyGetWindowManagerObject();
-            float[] currentScales = reflectivelyGetAnimationScales(windowManagerObject);
-            for (int i = 0; i < currentScales.length; i++) {
-                currentScales[i] = animationScale;
-            }
-            reflectivelySetAnimationScales(windowManagerObject, currentScales);
-            Log.d(TAG, "All animation scales set to " + animationScale + " reflectively.");
-            return true;
+            float[] animationScales = reflectivelyGetAnimationScales(windowManagerObject);
+            Log.d(TAG, "All animation scales get reflectively.");
+            return animationScales;
         } catch (ClassNotFoundException cnfe) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", cnfe);
+            Log.w(TAG, "Cannot get animation scales reflectively.", cnfe);
         } catch (NoSuchMethodException mnfe) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", mnfe);
+            Log.w(TAG, "Cannot get animation scales reflectively.", mnfe);
         } catch (SecurityException se) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", se);
+            Log.w(TAG, "Cannot get animation scales reflectively.", se);
         } catch (InvocationTargetException ite) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", ite);
+            Log.w(TAG, "Cannot get animation scales reflectively.", ite);
         } catch (IllegalAccessException iae) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", iae);
+            Log.w(TAG, "Cannot get animation scales reflectively.", iae);
         } catch (RuntimeException re) {
-            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", re);
+            Log.w(TAG, "Cannot get animation scales reflectively.", re);
         }
-        return false;
+        return null;
     }
 
     @SuppressWarnings("TryWithIdenticalCatches")
@@ -149,6 +203,33 @@ class AnimationAwareWriter extends AnimationAwareReader {
             Log.w(TAG, "Cannot set animation scales reflectively.", iae);
         } catch (RuntimeException re) {
             Log.w(TAG, "Cannot set animation scales reflectively.", re);
+        }
+        return false;
+    }
+
+    @SuppressWarnings("TryWithIdenticalCatches")
+    private static boolean reflectivelySetAnimationScalesTo(float animationScale) {
+        try {
+            final Object windowManagerObject = reflectivelyGetWindowManagerObject();
+            float[] animationScales = reflectivelyGetAnimationScales(windowManagerObject);
+            for (int i = 0; i < animationScales.length; i++) {
+                animationScales[i] = animationScale;
+            }
+            reflectivelySetAnimationScales(windowManagerObject, animationScales);
+            Log.d(TAG, "All animation scales set to " + animationScale + " reflectively.");
+            return true;
+        } catch (ClassNotFoundException cnfe) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", cnfe);
+        } catch (NoSuchMethodException mnfe) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", mnfe);
+        } catch (SecurityException se) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", se);
+        } catch (InvocationTargetException ite) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", ite);
+        } catch (IllegalAccessException iae) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", iae);
+        } catch (RuntimeException re) {
+            Log.w(TAG, "Cannot set animation scales to " + animationScale + " reflectively.", re);
         }
         return false;
     }
@@ -207,6 +288,15 @@ class AnimationAwareWriter extends AnimationAwareReader {
     }
 
     /**
+     * Error that's being thrown when animation scales cannot be retrieved.
+     */
+    private static class GetAnimationScalesFailedException extends RuntimeException {
+        public GetAnimationScalesFailedException() {
+            super("Failed to retrieve animations and transitions.");
+        }
+    }
+
+    /**
      * Error that's being thrown when animation scales have been changed and cannot be restored.
      */
     private static class SetAnimationScalesFailedException extends RuntimeException {
@@ -214,4 +304,16 @@ class AnimationAwareWriter extends AnimationAwareReader {
             super("Failed to restore animations and transitions after to execute this test.");
         }
     }
+
+    /**
+     * Error that's being thrown when SET_ANIMATION_SCALE permission is denied.
+     */
+    public static class WritePermissionDeniedException extends RuntimeException {
+        public WritePermissionDeniedException() {
+            super("To properly execute this test, disable animations and transitions " +
+                    "on your device or grant " + SET_ANIMATION_SCALE + " permission to debug.\n" +
+                    "For more info check: http://goo.gl/qVu1yV");
+        }
+    }
+
 }

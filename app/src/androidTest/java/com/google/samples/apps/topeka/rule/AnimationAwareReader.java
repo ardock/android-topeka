@@ -27,15 +27,19 @@ import android.util.Log;
 /**
  * A helper class that can detect if animations or transitions are enabled on a device.
  */
-class AnimationAwareReader {
+class AnimationAwareReader implements AnimationAwareAwesome {
 
     private static final String TAG = "AnimationAwareReader";
-    private static final float DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND = 1.0f;
+
+    /**
+     * Enabled scale value.
+     */
+    private static final float DEFAULT = 1.0f;
 
     /**
      * Throws an exception when your system has animations enabled and should not.
      *
-     * @throws AnimationsEnabledException
+     * @throws AnimationsEnabledException if animations are enabled and should not.
      */
     public static void checkForDisabledAnimationsAndTransitions()
             throws AnimationsEnabledException {
@@ -48,9 +52,9 @@ class AnimationAwareReader {
     /**
      * Returns whether or not is any animation or transition enabled on a device.
      *
-     * @return true if any animation or transition is enabled on a device, false otherwise.
+     * @return True if any animation or transition is enabled on a device. False otherwise.
      */
-    private static boolean isAnyAnimationEnabled() {
+    public static boolean isAnyAnimationEnabled() {
         ContentResolver resolver = InstrumentationRegistry.getTargetContext().getContentResolver();
         final float windowAnimationScale = getWindowAnimationScale(resolver);
         final float transitionAnimationScale = getTransitionAnimationScale(resolver);
@@ -59,9 +63,9 @@ class AnimationAwareReader {
     }
 
     /**
-     * Returns an array containing the current animation scales to be used to restore when disabled.
+     * Returns an array containing the current animation scales.
      *
-     * @return an array containing the current animation scales.
+     * @return An array containing the current animation scales.
      */
     public static float[] getAnimationScales() {
         ContentResolver resolver = InstrumentationRegistry.getTargetContext().getContentResolver();
@@ -112,8 +116,8 @@ class AnimationAwareReader {
         try {
             return Settings.Global.getFloat(resolver, setting);
         } catch (Settings.SettingNotFoundException e) {
-            Log.w(TAG, "getSystemSetting: Setting not found", e);
-            return DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND;
+            Log.w(TAG, "getSystemSetting: Setting not found, default scale 1x returned", e);
+            return DEFAULT;
         }
     }
 
@@ -121,8 +125,8 @@ class AnimationAwareReader {
         try {
             return Settings.System.getFloat(resolver, setting);
         } catch (Settings.SettingNotFoundException e) {
-            Log.w(TAG, "getSystemSetting: Setting not found", e);
-            return DEFAULT_ENABLED_SCALE_IF_SETTING_NOT_FOUND;
+            Log.w(TAG, "getSystemSetting: Setting not found, default scale 1x returned", e);
+            return DEFAULT;
         }
     }
 
@@ -136,4 +140,5 @@ class AnimationAwareReader {
                     "For more info check: http://goo.gl/qVu1yV");
         }
     }
+
 }
