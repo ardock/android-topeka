@@ -317,8 +317,6 @@ function print-myname {
 function print-delayed {
     sleep 480
     print-mytext "`echo "\n"`"
-    sleep 480
-    print-mytext "`echo "\n"`"
 }
 
 # Print my help
