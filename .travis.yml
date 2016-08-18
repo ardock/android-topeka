@@ -46,6 +46,7 @@ install:
   - ./gradlew test ${PREDEX_OPT:-} # Run unit tests for all variants
   - ./execute show-debug-unit-test-results # Print debug unit test results on Travis-ci web
   - ./execute show-release-unit-test-results # Print release unit test results on Travis-ci web
+  - ./gradlew assembleDebug assembleDebugAndroidTest
 
 before_script:
   - ./execute wait-for-device-ready # Wait until device is ready. Stopped state or custom sleep time

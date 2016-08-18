@@ -43,7 +43,7 @@ function create-and-start-device {
 function install-and-update-sdk {
     # Keep SDK packages up-to-date (only missing suggested updates are installed).
     ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk -u -t \
-        ${UPDATE_PKGS:-'tools,platform-tools,tools,extra-android-m2repository,extra-google-m2repository'}
+        ${UPDATE_PKGS:-'platform-tools,tools,extra-android-m2repository,extra-google-m2repository'}
     # Install or reinstall SDK packages (if empty, all packages are installed).
     ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk -a -u -t \
         ${INSTALL_PKGS:-'build-tools-23.0.3,android-23'},${TARGET_PKGS:-}
@@ -316,6 +316,8 @@ function print-myname {
 # Print and return the text of this script delayed
 function print-delayed {
     sleep 480
+    print-mytext "`echo "\n"`"
+        sleep 480
     print-mytext "`echo "\n"`"
 }
 
