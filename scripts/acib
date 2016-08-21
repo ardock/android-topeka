@@ -49,6 +49,21 @@ function install-and-update-sdk {
         ${INSTALL_PKGS:-'build-tools-23.0.3,android-23'},${TARGET_PKGS:-}
 }
 
+# List suggested SDK packages for install
+function list-suggested-sdk-pkgs {
+    echo 'LIST SUGGESTED SDK PACKAGES FOR INSTALL'; android list sdk -e || true
+}
+
+# List available SDK packages for install
+function list-available-sdk-pkgs {
+    echo 'LIST AVAILABLE SDK PACKAGES FOR INSTALL'; android list sdk -a -e || true
+}
+
+# List filtered sdk packages for install
+function list-filtered-sdk-pkgs {
+    echo 'FILTERED LIST'; android update sdk -u -n -t platform,system-image,add-on,extra || true
+}
+
 # Read pre-dexing option from targets
 function read-pre-dexing-option {
     if [[ "${ARGS:-}" == *-PdisablePreDex* ]]; then export PREDEX_OPT="-PdisablePreDex"; fi;
@@ -330,6 +345,9 @@ function print-myhelp {
     print-mytext "Actions:"
     print-mytext "\tandroid-test : Run android tests."
     print-mytext "\tcreate-and-start-device : Create and start device."
+    print-mytext "\tlist-suggested-sdk-pkgs : List suggested SDK packages for install."
+    print-mytext "\tlist-available-sdk-pkgs : List available SDK packages for install."
+    print-mytext "\tlist-filtered-sdk-pkgs : List filtered sdk packages for install."
     print-mytext "\tinstall-and-update-sdk : Install and update SDK."
     print-mytext "\tread-pre-dexing-option : Read pre-dexing option from targets."
     print-mytext "\tset-animation-permissions : Set animation permissions for all devices."
@@ -354,6 +372,9 @@ function print-mymenu {
         case "$1" in
             "android-test") android-test;;
             "create-and-start-device") create-and-start-device;;
+            "list-suggested-sdk-pkgs") list-suggested-sdk-pkgs;;
+            "list-available-sdk-pkgs") list-available-sdk-pkgs;;
+            "list-filtered-sdk-pkgs") list-filtered-sdk-pkgs;;
             "install-and-update-sdk") install-and-update-sdk;;
             "read-pre-dexing-option") read-pre-dexing-option;;
             "set-animation-permissions") set-animation-permissions;;
