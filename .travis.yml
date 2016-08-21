@@ -54,8 +54,7 @@ before_script:
 
 script:
   - ./execute print-delayed & # Print script text delayed 8 minutes to avoid travis timeout
-#  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
-  - ./execute android-test
+  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
 
 after_script:
   - ./execute show-android-test-results # Print intrumentation test results on Travis-ci web

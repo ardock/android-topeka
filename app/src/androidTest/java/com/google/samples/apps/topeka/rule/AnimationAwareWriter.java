@@ -33,6 +33,11 @@ class AnimationAwareWriter extends AnimationAwareReader {
     private static final String TAG = "AnimationAwareWriter";
 
     /**
+     * Package manager command to grant permissions.
+     */
+    private static final String PM_GRANT_CMD = "pm grant ";
+
+    /**
      * Constant permission name.
      */
     private static final String SET_ANIMATION_SCALE = "android.permission.SET_ANIMATION_SCALE";
@@ -56,10 +61,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToDisableAnimationsAndTransitions()
             throws DisableAnimationScalesFailedException {
 
-        // Permission is not granted for M. Testing possible workarounds.
-        grantSetAnimationScalePermissionForM();
-
-        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (isWritePermissionDenied()) {
             Log.w(TAG, "Cannot disable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(DISABLED)) {
@@ -78,10 +80,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToEnableAnimationsAndTransitions()
             throws EnableAnimationScalesFailedException {
 
-        // Permission is not granted for M. Testing possible workarounds.
-        grantSetAnimationScalePermissionForM();
-
-        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (isWritePermissionDenied()) {
             Log.w(TAG, "Cannot enable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(ENABLED)) {
@@ -100,10 +99,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static float[] tryToGetAnimationsAndTransitions()
             throws GetAnimationScalesFailedException {
 
-        // Permission is not granted for M. Testing possible workarounds.
-        grantSetAnimationScalePermissionForM();
-
-        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (isWritePermissionDenied()) {
             Log.w(TAG, "Cannot get animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return null;
         } else {
@@ -126,9 +122,10 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToSetAnimationsAndTransitions(float[] animationScales)
             throws SetAnimationScalesFailedException {
 
-        // Permission is not granted for M. Testing possible workarounds.
+        // Permission is not granted for M emulators. Testing possible workarounds.
         grantSetAnimationScalePermissionForM();
 
+        // Test exception on M devices.
         if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Cannot set animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
@@ -140,13 +137,13 @@ class AnimationAwareWriter extends AnimationAwareReader {
     }
 
     /**
-     * Try to grant permission for M+ devices.
+     * Try to grant permission for M+ devices using package manager.
      */
     private static void grantSetAnimationScalePermissionForM() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(
-                    "pm grant " + InstrumentationRegistry.getTargetContext().getPackageName()
-                            + " android.permission.SET_ANIMATION_SCALE");
+                    PM_GRANT_CMD + InstrumentationRegistry.getTargetContext().getPackageName()
+                            + " " + SET_ANIMATION_SCALE);
         }
     }
 
@@ -221,28 +218,30 @@ class AnimationAwareWriter extends AnimationAwareReader {
             return true;
         } catch (ClassNotFoundException cnfe) {
             Log.w(TAG, "Cannot set animation scales reflectively.", cnfe);
-//            throw new SetAnimationScalesFailedException(getRootCauseMessage(cnfe));
         } catch (NoSuchMethodException mnfe) {
             Log.w(TAG, "Cannot set animation scales reflectively.", mnfe);
-//            throw new SetAnimationScalesFailedException(getRootCauseMessage(mnfe));
         } catch (SecurityException se) {
             Log.w(TAG, "Cannot set animation scales reflectively.", se);
-//            throw new SetAnimationScalesFailedException(getRootCauseMessage(se));
         } catch (InvocationTargetException ite) {
             Log.w(TAG, "Cannot set animation scales reflectively.", ite);
             throw new SetAnimationScalesFailedException(getRootCauseMessage(ite)); // TEST API 23...
         } catch (IllegalAccessException iae) {
             Log.w(TAG, "Cannot set animation scales reflectively.", iae);
-//            throw new SetAnimationScalesFailedException(getRootCauseMessage(iae));
         } catch (RuntimeException re) {
             Log.w(TAG, "Cannot set animation scales reflectively.", re);
         }
         return false;
     }
 
-    public static String getRootCauseMessage(Throwable throwable) {
+    /**
+     * Gets recursively the cause message wrapped in the throwable received as parameter.
+     *
+     * @param throwable The throwable.
+     * @return The root cause message or null if no message was provided at creation time.
+     */
+    private static String getRootCauseMessage(Throwable throwable) {
         if (throwable.getCause() != null) {
-            return  getRootCauseMessage(throwable.getCause());
+            return getRootCauseMessage(throwable.getCause());
         }
         return throwable.getMessage();
     }

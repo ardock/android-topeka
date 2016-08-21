@@ -86,4 +86,4 @@ dependencies {
     androidTestCompile "org.hamcrest:hamcrest-core:${hamcrestVersion}"
 }
 
-//apply from: "grant-set-animation-scale-permission.gradle"
+apply from: "grant-set-animation-scale-permission.gradle"
