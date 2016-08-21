@@ -17,6 +17,7 @@
 package com.google.samples.apps.topeka.rule;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.test.InstrumentationRegistry;
 import android.util.Log;
@@ -55,7 +56,10 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToDisableAnimationsAndTransitions()
             throws DisableAnimationScalesFailedException {
 
-        if (isWritePermissionDenied()) {
+        // Permission is not granted for M. Testing possible workarounds.
+        grantSetAnimationScalePermissionForM();
+
+        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Cannot disable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(DISABLED)) {
@@ -74,7 +78,10 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToEnableAnimationsAndTransitions()
             throws EnableAnimationScalesFailedException {
 
-        if (isWritePermissionDenied()) {
+        // Permission is not granted for M. Testing possible workarounds.
+        grantSetAnimationScalePermissionForM();
+
+        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Cannot enable animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScalesTo(ENABLED)) {
@@ -93,7 +100,10 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static float[] tryToGetAnimationsAndTransitions()
             throws GetAnimationScalesFailedException {
 
-        if (isWritePermissionDenied()) {
+        // Permission is not granted for M. Testing possible workarounds.
+        grantSetAnimationScalePermissionForM();
+
+        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Cannot get animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return null;
         } else {
@@ -116,13 +126,27 @@ class AnimationAwareWriter extends AnimationAwareReader {
     public static boolean tryToSetAnimationsAndTransitions(float[] animationScales)
             throws SetAnimationScalesFailedException {
 
-        if (isWritePermissionDenied()) {
+        // Permission is not granted for M. Testing possible workarounds.
+        grantSetAnimationScalePermissionForM();
+
+        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Cannot set animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
         } else if (reflectivelySetAnimationScales(animationScales)) {
             return true;
         } else {
             throw new SetAnimationScalesFailedException();
+        }
+    }
+
+    /**
+     * Try to grant permission for M+ devices.
+     */
+    private static void grantSetAnimationScalePermissionForM() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(
+                    "pm grant " + InstrumentationRegistry.getTargetContext().getPackageName()
+                            + " android.permission.SET_ANIMATION_SCALE");
         }
     }
 
@@ -158,7 +182,11 @@ class AnimationAwareWriter extends AnimationAwareReader {
      * @return The disabled scales array.
      */
     public static float[] createDisabledScalesArray(int length) {
-        return new float[length];
+        float[] scales = new float[length];
+        for (int i = 0; i < length; i++) {
+            scales[i] = DISABLED;
+        }
+        return scales;
     }
 
     @SuppressWarnings("TryWithIdenticalCatches")
@@ -193,18 +221,30 @@ class AnimationAwareWriter extends AnimationAwareReader {
             return true;
         } catch (ClassNotFoundException cnfe) {
             Log.w(TAG, "Cannot set animation scales reflectively.", cnfe);
+//            throw new SetAnimationScalesFailedException(getRootCauseMessage(cnfe));
         } catch (NoSuchMethodException mnfe) {
             Log.w(TAG, "Cannot set animation scales reflectively.", mnfe);
+//            throw new SetAnimationScalesFailedException(getRootCauseMessage(mnfe));
         } catch (SecurityException se) {
             Log.w(TAG, "Cannot set animation scales reflectively.", se);
+//            throw new SetAnimationScalesFailedException(getRootCauseMessage(se));
         } catch (InvocationTargetException ite) {
             Log.w(TAG, "Cannot set animation scales reflectively.", ite);
+            throw new SetAnimationScalesFailedException(getRootCauseMessage(ite)); // TEST API 23...
         } catch (IllegalAccessException iae) {
             Log.w(TAG, "Cannot set animation scales reflectively.", iae);
+//            throw new SetAnimationScalesFailedException(getRootCauseMessage(iae));
         } catch (RuntimeException re) {
             Log.w(TAG, "Cannot set animation scales reflectively.", re);
         }
         return false;
+    }
+
+    public static String getRootCauseMessage(Throwable throwable) {
+        if (throwable.getCause() != null) {
+            return  getRootCauseMessage(throwable.getCause());
+        }
+        return throwable.getMessage();
     }
 
     @SuppressWarnings("TryWithIdenticalCatches")
@@ -302,6 +342,11 @@ class AnimationAwareWriter extends AnimationAwareReader {
     private static class SetAnimationScalesFailedException extends RuntimeException {
         public SetAnimationScalesFailedException() {
             super("Failed to restore animations and transitions after to execute this test.");
+        }
+
+        public SetAnimationScalesFailedException(String msg) {
+            super("Failed to restore animations and transitions after to execute this test.\n" +
+                    msg);
         }
     }
 

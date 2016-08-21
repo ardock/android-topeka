@@ -50,23 +50,28 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
             throws RetrieveAndDisableAnimationsFailedException {
 
         // Use reflection to get animation scales. Requires SET_ANIMATION_SCALE permission.
-        float[] currentScales = getAnimationScales(REFLECTIVELY);
+        float[] userScales = getAnimationScales(REFLECTIVELY);
 
         // If SET_ANIMATION_SCALE permission denied, get the scales using settings.
-        if (currentScales == null) {
-            currentScales = getAnimationScales(NOT_REFLECTIVELY);
+        if (userScales == null) {
+            userScales = getAnimationScales(NOT_REFLECTIVELY);
         }
 
         // If all scales already disabled, do nothing.
-        if (allScalesDisabled(currentScales)) {
+        if (allScalesDisabled(userScales)) {
             return null;
+        }
+
+        // If user scales length is unsupported, exception recommending AnimationAwareWriter usage.
+        if (hasUnsupportedScalesLength(userScales)) {
+            throw new UnsupportedScalesLengthException();
         }
 
         final float[] disabledScales = createDisabledScalesArray(SUPPORTED_SCALES_LENGTH);
 
-        // If user scales length is supported, try to restore user scales.
-        if (hasSupportedLength(currentScales) && tryToSetAnimationsAndTransitions(disabledScales)) {
-            return currentScales;
+        // Try to disable user scales and return his previous scales.
+        if (tryToSetAnimationsAndTransitions(disabledScales)) {
+            return userScales;
         } else {
             throw new RetrieveAndDisableAnimationsFailedException();
         }
@@ -105,8 +110,13 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
             return false;
         }
 
-        // If user scales length is supported, try to restore user scales.
-        if (hasSupportedLength(userScales) && tryToSetAnimationsAndTransitions(userScales)) {
+        // If user scales length is unsupported, exception recommending AnimationAwareWriter usage.
+        if (hasUnsupportedScalesLength(userScales)) {
+            throw new UnsupportedScalesLengthException();
+        }
+
+        // Try to restore user scales previously saved.
+        if (tryToSetAnimationsAndTransitions(userScales)) {
             return true;
         } else {
             throw new RestoreAndEnableAnimationsFailedException();
@@ -114,15 +124,15 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
     }
 
     /**
-     * Returns whether the number of scales is actually supported.
+     * Returns whether the number of scales is actually unsupported.
      * <p/>
      * If the length is not supported, there is the option to extend or use AnimationAwareWriter.
      *
      * @param scales The array of scales.
-     * @return True if the length of the array is supported. False otherwise.
+     * @return True if the length of the array is unsupported. False otherwise.
      */
-    private static boolean hasSupportedLength(float[] scales) {
-        return scales.length == SUPPORTED_SCALES_LENGTH;
+    private static boolean hasUnsupportedScalesLength(float[] scales) {
+        return scales.length != SUPPORTED_SCALES_LENGTH;
     }
 
     /**
@@ -140,6 +150,15 @@ public class AnimationAwareWonder extends AnimationAwareWriter {
     private static class RestoreAndEnableAnimationsFailedException extends RuntimeException {
         public RestoreAndEnableAnimationsFailedException() {
             super("Failed to restore and enable previously retrieved animations and transitions.");
+        }
+    }
+
+    /**
+     * Error that's being thrown when the number of animation scales it's not suppported.
+     */
+    private static class UnsupportedScalesLengthException extends RuntimeException {
+        public UnsupportedScalesLengthException() {
+            super("Failed to manage this number of scales, please use AnimationAwareWriter class.");
         }
     }
 
