@@ -13,7 +13,7 @@ function android-test {
     ./gradlew assembleDebugAndroidTest -PdisablePreDex
     adb install app/build/outputs/apk/app-debug.apk
     adb install app/build/outputs/apk/app-debug-androidTest-unaligned.apk
-#    adb shell pm grant com.google.samples.apps.topeka android.permission.SET_ANIMATION_SCALE
+    adb shell pm grant com.google.samples.apps.topeka android.permission.SET_ANIMATION_SCALE
     adb shell settings put global window_animation_scale 0
     adb shell settings put global transition_animation_scale 0
     adb shell settings put global animator_duration_scale 0
