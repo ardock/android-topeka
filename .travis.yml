@@ -22,8 +22,8 @@ env:
 matrix:
   include:
     - env: AVD_TARGET=android-17 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
-    - env: AVD_TARGET=android-21 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-19 ARGS='-PdisablePreDex'
+#    - env: AVD_TARGET=android-21 ARGS='-PdisablePreDex'
 #    - env: AVD_TARGET=android-22 ARGS='-PdisablePreDex' TARGET_PKGS=android-22,sys-img-armeabi-v7a-android-22
     - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
     - env: AVD_TARGET=android-24 ARGS='-PdisablePreDex' TARGET_PKGS=android-24,tool,platform-tool,sys-img-armeabi-v7a-android-24
@@ -44,7 +44,8 @@ install:
   - ./execute list-available-sdk-pkgs # List available SDK packages for install
   - ./execute list-filtered-sdk-pkgs # List filtered sdk packages for install
   - ./execute create-and-start-device # Create and start a device based on env vars or Acib defaults
-  - ./execute wait-for-device-online # Start adbd, wait for device connected and show android serial
+#  - ./execute wait-for-device-online # Start adbd, wait for device connected and show android serial
+  - sleep 120
   - ./gradlew --version # Show version and download Gradle Wrapper when is not present in cache
   - ./gradlew clean # Clean project and download Android dependencies when are not present in cache
   - ./gradlew test ${PREDEX_OPT:-} # Run unit tests for all variants
@@ -56,7 +57,8 @@ before_script:
 
 script:
   - ./execute print-delayed & # Print script text delayed 8 minutes to avoid travis timeout
-  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
+#  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
+  - ./execute android-test
 
 after_script:
   - ./execute show-android-test-results # Print intrumentation test results on Travis-ci web
