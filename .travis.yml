@@ -53,6 +53,7 @@ install:
 
 before_script:
   - ./execute wait-for-device-ready # Wait until device is ready. Stopped state or custom sleep time
+  - adb shell svc power stayon true # Keep emulator awake and disable animations:
   - adb shell settings put global window_animation_scale 0 &
   - adb shell settings put global transition_animation_scale 0 &
   - adb shell settings put global animator_duration_scale 0 &
