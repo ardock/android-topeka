@@ -16,9 +16,11 @@
 
 package com.google.samples.apps.topeka.rule;
 
+import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.util.Log;
 
@@ -51,6 +53,11 @@ class AnimationAwareWriter extends AnimationAwareReader {
      * Disabled scale value.
      */
     private static final float DISABLED = 0.0f;
+
+    /**
+     * Adb shell command to set a global setting.
+     */
+    private static final String SETTINGS_PUT_GLOBAL_CMD = "adb shell settings put global ";
 
     /**
      * Disables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
@@ -115,21 +122,30 @@ class AnimationAwareWriter extends AnimationAwareReader {
     /**
      * Sets animation and transition scales reflectively. Requires SET_ANIMATION_SCALE permission.
      *
-     * @param animationScales The animation and transition scales to be set.
+     * @param scales The animation and transition scales to be set.
      * @return True if animations are successfully set. False if write permission is denied.
      * @throws SetAnimationScalesFailedException if an error occurred.
      */
-    public static boolean tryToSetAnimationsAndTransitions(float[] animationScales)
+    public static boolean tryToSetAnimationsAndTransitions(float[] scales)
             throws SetAnimationScalesFailedException {
 
-        // Permission is not granted for M emulators. Testing possible workarounds.
-        grantSetAnimationScalePermissionForM();
+        // Permission is not granted for M emulators. Testing workaround via global settings.
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            grantSetAnimationScalePermissionForM();
+            // TODO: This is not generic, depends on length and names, move to Wonder or Reader.
+            // adb shell settings put global window_animation_scale 0
+            setAnimationScaleGlobalSetting(Settings.Global.WINDOW_ANIMATION_SCALE, scales[0]);
+            // adb shell settings put global transition_animation_scale 0
+            setAnimationScaleGlobalSetting(Settings.Global.TRANSITION_ANIMATION_SCALE, scales[1]);
+            // adb shell settings put global animator_duration_scale 0
+            setAnimationScaleGlobalSetting(Settings.Global.ANIMATOR_DURATION_SCALE, scales[2]);
+        }
 
         // Test exception on M devices.
-        if (isWritePermissionDenied() && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (isWritePermissionDenied()) {
             Log.w(TAG, "Cannot set animations. Requires " + SET_ANIMATION_SCALE + " granted.");
             return false;
-        } else if (reflectivelySetAnimationScales(animationScales)) {
+        } else if (reflectivelySetAnimationScales(scales)) {
             return true;
         } else {
             throw new SetAnimationScalesFailedException();
@@ -139,12 +155,23 @@ class AnimationAwareWriter extends AnimationAwareReader {
     /**
      * Try to grant permission for M+ devices using package manager.
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static void grantSetAnimationScalePermissionForM() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(
-                    PM_GRANT_CMD + InstrumentationRegistry.getTargetContext().getPackageName()
-                            + " " + SET_ANIMATION_SCALE);
-        }
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(
+                PM_GRANT_CMD + InstrumentationRegistry.getTargetContext().getPackageName()
+                        + " " + SET_ANIMATION_SCALE);
+    }
+
+    /**
+     * Try to set an animation scale value via settings.
+     *
+     * @param name  The name of the scale to be set.
+     * @param value The value to be set.
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static void setAnimationScaleGlobalSetting(String name, float value) {
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(
+                SETTINGS_PUT_GLOBAL_CMD + name + " " + value);
     }
 
     /**
