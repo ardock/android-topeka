@@ -26,7 +26,7 @@ matrix:
     - env: AVD_TARGET=android-21 ARGS='-PdisablePreDex'
 #    - env: AVD_TARGET=android-22 ARGS='-PdisablePreDex' TARGET_PKGS=android-22,sys-img-armeabi-v7a-android-22
     - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
-    - env: AVD_TARGET=android-24 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-24
+    - env: AVD_TARGET=android-24 ARGS='-PdisablePreDex' TARGET_PKGS=android-24,tool,platform-tool,sys-img-armeabi-v7a-android-24
   allow_failures:
     - env: AVD_TARGET=android-23 ARGS='-PdisablePreDex' TARGET_PKGS=sys-img-armeabi-v7a-android-23
     - env: AVD_TARGET=android-24 ARGS='-PdisablePreDex' TARGET_PKGS=android-24,tool,platform-tool,sys-img-armeabi-v7a-android-24
