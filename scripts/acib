@@ -34,6 +34,7 @@ function create-and-start-device {
     emulator -avd "${AVD_NAME:-test}" \
         -no-audio \
         -no-window \
+        -no-boot-anim \    # wait-for-device-ready depends on bootanim. If disabled, add sleep time
         -debug "${AVD_DEBUG:-avd_config}" &
 }
 #        -no-skin \         # the emulator screen size is fixed removing this option, locally. CI??
@@ -117,36 +118,37 @@ function show-android-test-results {
 
 # Wait for device online
 function wait-for-device-online {
-    adb wait-for-device get-serialno # start adbd, wait for device connected and show android serial
+#    adb wait-for-device get-serialno # start adbd, wait for device connected and show android serial
+    sleep 120
 }
 
 # Wait for device ready
 function wait-for-device-ready {
-    local bootanim=""
-    local failcounter=0
-    until [[ "$bootanim" =~ "stopped" ]]; do
-        bootanim=`adb hell getprop init.svc.bootanim 2>&1`
-        echo "$bootanim"
-        if [[ "$bootanim" =~ "not found" ]]; then
-            let "failcounter += 1"
-            if [[ ${failcounter} -gt 30 ]]; then
-                echo "Failed to start emulator"
-                exit 1
-            fi
-        fi
-        sleep 1
-    done
-    sleep 30
-    adb shell input keyevent 82 &
-    sleep 15
-#    local sleepfactor=18
-#    local sleeptime=10
-#    print-format cyan "Waiting for device ready: "
-#    for ((i=0;i<$sleepfactor;i++));
-#    do
-#        print-format b_red yellow "sleeping... $(($sleepfactor - $i))0 seconds left..."
-#        sleep $sleeptime
+#    local bootanim=""
+#    local failcounter=0
+#    until [[ "$bootanim" =~ "stopped" ]]; do
+#        bootanim=`adb hell getprop init.svc.bootanim 2>&1`
+#        echo "$bootanim"
+#        if [[ "$bootanim" =~ "not found" ]]; then
+#            let "failcounter += 1"
+#            if [[ ${failcounter} -gt 30 ]]; then
+#                echo "Failed to start emulator"
+#                exit 1
+#            fi
+#        fi
+#        sleep 1
 #    done
+#    sleep 30
+#    adb shell input keyevent 82 &
+#    sleep 15
+    local sleepfactor=30
+    local sleeptime=10
+    print-format cyan "Waiting for device ready: "
+    for ((i=0;i<$sleepfactor;i++));
+    do
+        print-format b_red yellow "sleeping... $(($sleepfactor - $i))0 seconds left..."
+        sleep $sleeptime
+    done
     print-format reset green "Ready!!!"
 }
 
