@@ -34,8 +34,8 @@ function create-and-start-device {
     emulator -avd "${AVD_NAME:-test}" \
         -no-audio \
         -no-window \
-        -no-boot-anim \    # wait-for-device-ready depends on bootanim. If disabled, add sleep time
-        -debug "${AVD_DEBUG:-avd_config}" &
+        -no-boot-anim &    # wait-for-device-ready depends on bootanim. If disabled, add sleep time
+#        -debug "${AVD_DEBUG:-avd_config}" &
 }
 #        -no-skin \         # the emulator screen size is fixed removing this option, locally. CI??
 #        -no-boot-anim \    # wait-for-device-ready depends on bootanim. If disabled, add sleep time
@@ -141,7 +141,7 @@ function wait-for-device-ready {
 #    sleep 30
 #    adb shell input keyevent 82 &
 #    sleep 15
-    local sleepfactor=30
+    local sleepfactor=50
     local sleeptime=10
     print-format cyan "Waiting for device ready: "
     for ((i=0;i<$sleepfactor;i++));

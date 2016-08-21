@@ -17,7 +17,7 @@ env:
   global:
     - ADB_INSTALL_TIMEOUT=15
     - GRADLE_USER_HOME="${TRAVIS_BUILD_DIR}/gradle"
-    - AVD_DEBUG='init,avd_config,nand_limits,keys,adb,adbserver,adbclient'
+#    - AVD_DEBUG='init,avd_config,nand_limits,keys,adb,adbserver,adbclient'
 
 matrix:
   include:
@@ -56,8 +56,8 @@ before_script:
 
 script:
   - ./execute print-delayed & # Print script text delayed 8 minutes to avoid travis timeout
-#  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
-  - ./execute android-test
+  - ./gradlew cAT  ${PREDEX_OPT:-} # Install and runs android tests for all flavors
+#  - ./execute android-test
 
 after_script:
   - ./execute show-android-test-results # Print intrumentation test results on Travis-ci web
