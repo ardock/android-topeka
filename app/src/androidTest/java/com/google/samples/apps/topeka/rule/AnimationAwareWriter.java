@@ -55,9 +55,9 @@ class AnimationAwareWriter extends AnimationAwareReader {
     private static final float DISABLED = 0.0f;
 
     /**
-     * Adb shell command to set a global setting.
+     * Put command to set a global setting.
      */
-    private static final String SETTINGS_PUT_GLOBAL_CMD = "adb shell settings put global ";
+    private static final String SETTINGS_PUT_GLOBAL_CMD = "settings put global ";
 
     /**
      * Disables animations and transitions reflectively. Requires SET_ANIMATION_SCALE permission.
@@ -131,6 +131,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
 
         // Permission is not granted for M emulators. Testing workaround via global settings.
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            // adb shell pm grant PACKAGE_NAME android.permission.SET_ANIMATION_SCALE
             grantSetAnimationScalePermissionForM();
             // TODO: This is not generic, depends on length and names, move to Wonder or Reader.
             // adb shell settings put global window_animation_scale 0
