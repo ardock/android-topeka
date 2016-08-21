@@ -139,6 +139,7 @@ class AnimationAwareWriter extends AnimationAwareReader {
             setAnimationScaleGlobalSetting(Settings.Global.TRANSITION_ANIMATION_SCALE, scales[1]);
             // adb shell settings put global animator_duration_scale 0
             setAnimationScaleGlobalSetting(Settings.Global.ANIMATOR_DURATION_SCALE, scales[2]);
+            return true;
         }
 
         // Test exception on M devices.
